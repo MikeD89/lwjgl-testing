@@ -1,4 +1,6 @@
+import org.lwjgl.LWJGLException;
+
 public interface CanvasInterface {
     void setRenderable(Renderable renderable);
-    void renderLoop();
+    void renderLoop() throws LWJGLException;
 }

@@ -9,20 +9,32 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.lwjgl.Sys.getTime;
 import static org.lwjgl.opengl.GL11.*;
 
-public class LW2_AWT_Canvas implements CanvasInterface {
+public class LW2_AWT_Canvas<Queue> implements CanvasInterface {
 
     private static boolean closeRequested = false;
     private final static AtomicReference<Dimension> newCanvasSize = new AtomicReference<Dimension>();
     private final FPSUpdater fps;
     private Color clearColour = Color.CYAN;
-    private AtomicReference<Renderable> renderable = new AtomicReference<>(null);
 
-    Frame frame = new Frame();
+    protected AtomicReference<Renderable> renderable = new AtomicReference<>(null);
+    protected Frame frame = new Frame();
+
+    private boolean vsync = false;
+
+    private java.util.List<MikeAction> actionList = Collections.synchronizedList(new ArrayList<>());
+
+    public void toggleVSync() {
+        vsync = !vsync;
+        actionList.add(() -> Display.setVSyncEnabled(vsync));
+    }
 
     @Override
     public void setRenderable(Renderable r) {
@@ -60,20 +72,20 @@ public class LW2_AWT_Canvas implements CanvasInterface {
 
         try {
             Display.setParent(canvas);
-            Display.setVSyncEnabled(false);
+            Display.setVSyncEnabled(vsync);
 
             frame.setPreferredSize(new Dimension(1024, 786));
             frame.setMinimumSize(new Dimension(800, 600));
-            frame.pack();
-            frame.setVisible(true);
-            Display.create();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
-    public void renderLoop() {
+    public void renderLoop() throws LWJGLException {
+        frame.pack();
+        frame.setVisible(true);
+        Display.create();
 
         // Init
         glClearColor(clearColour.getRed() / 255.0f, clearColour.getGreen() / 255.0f, clearColour.getBlue() / 255.0f, 1.0f);
@@ -81,6 +93,11 @@ public class LW2_AWT_Canvas implements CanvasInterface {
         while (!Display.isCloseRequested() && !closeRequested) {
             Renderable r = renderable.get();
             Dimension newDim = newCanvasSize.getAndSet(null);
+
+            // Empty the list
+            while(actionList.size() != 0) {
+                actionList.remove(0).doSomething();
+            }
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

@@ -116,6 +116,16 @@ public class LW2_Gears implements Renderable {
         glPopMatrix();
     }
 
+    @Override
+    public void interact(String stuff) {
+
+    }
+
+    @Override
+    public void interact(double number) {
+
+    }
+
 
     /**
      * Draw a gear wheel.  You'll probably want to call this function when
