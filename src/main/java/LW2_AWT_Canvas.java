@@ -91,7 +91,9 @@ public class LW2_AWT_Canvas implements CanvasInterface {
                 // Projection
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
-                glOrtho(0.0f, (float) newDim.width, 0.0f, (float) newDim.height, -1000, 10000);
+
+                float h = (float) newDim.width / (float) newDim.height;
+                glFrustum(-1.0f, 1.0f, -h, h, 5.0f, 60.0f);
             }
 
             // Render a component
