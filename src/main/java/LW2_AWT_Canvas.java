@@ -82,7 +82,7 @@ public class LW2_AWT_Canvas<Queue> implements CanvasInterface {
     }
 
 
-    public void renderLoop() throws LWJGLException {
+    public void renderLoop(String[] args) throws LWJGLException {
         frame.pack();
         frame.setVisible(true);
         Display.create();
