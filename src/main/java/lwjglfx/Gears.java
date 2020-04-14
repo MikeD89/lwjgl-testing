@@ -31,6 +31,9 @@
  */
 package lwjglfx;
 
+import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.ReadOnlyIntegerWrapper;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.*;
@@ -38,22 +41,14 @@ import org.lwjgl.util.stream.RenderStream;
 import org.lwjgl.util.stream.StreamHandler;
 import org.lwjgl.util.stream.StreamUtil;
 import org.lwjgl.util.stream.StreamUtil.RenderStreamFactory;
-import org.lwjgl.util.stream.StreamUtil.TextureStreamFactory;
-import org.lwjgl.util.stream.TextureStream;
 
 import java.nio.FloatBuffer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicLong;
 
-import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyIntegerProperty;
-import javafx.beans.property.ReadOnlyIntegerWrapper;
-
-import static org.lwjgl.opengl.AMDDebugOutput.*;
+import static org.lwjgl.opengl.AMDDebugOutput.glDebugMessageCallbackAMD;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.glGetInteger;
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL30.GL_MAX_SAMPLES;
 import static org.lwjgl.opengl.KHRDebug.*;
 
 /** The LWJGL Gears test, modified to use the PBO reader & writer. */
@@ -75,9 +70,6 @@ final class Gears {
 	private RenderStreamFactory renderStreamFactory;
 	private RenderStream        renderStream;
 
-	private TextureStreamFactory textureStreamFactory;
-	private TextureStream        textureStream;
-
 	private int gear1;
 	private int gear2;
 	private int gear3;
@@ -89,10 +81,7 @@ final class Gears {
 	private int transfersToBuffer = 2;
 	private int samples           = 1;
 
-	private final AtomicLong snapshotRequest;
-	private       long       snapshotCurrent;
-
-	Gears(final StreamHandler readHandler, final StreamHandler writeHandler) {
+	Gears(final StreamHandler readHandler) {
 		this.pendingRunnables = new ConcurrentLinkedQueue<Runnable>();
 
 		this.fps = new ReadOnlyIntegerWrapper(this, "fps", 0);
@@ -125,12 +114,6 @@ final class Gears {
 
 		this.renderStreamFactory = StreamUtil.getRenderStreamImplementation();
 		this.renderStream = renderStreamFactory.create(readHandler, 1, transfersToBuffer);
-
-		this.textureStreamFactory = StreamUtil.getTextureStreamImplementation();
-		this.textureStream = textureStreamFactory.create(writeHandler, transfersToBuffer);
-
-		this.snapshotRequest = new AtomicLong();
-		this.snapshotCurrent = -1L;
 	}
 
 	public int getMaxSamples() {
@@ -154,24 +137,6 @@ final class Gears {
 		});
 	}
 
-	public TextureStreamFactory getTextureStreamFactory() {
-		return textureStreamFactory;
-	}
-
-	public void setTextureStreamFactory(final TextureStreamFactory textureStreamFactory) {
-		pendingRunnables.offer(new Runnable() {
-			public void run() {
-				if ( textureStream != null )
-					textureStream.destroy();
-
-				Gears.this.textureStreamFactory = textureStreamFactory;
-
-				textureStream = textureStreamFactory.create(textureStream.getHandler(), transfersToBuffer);
-				updateSnapshot();
-			}
-		});
-
-	}
 
 	private void init() {
 		// setup ogl
@@ -236,12 +201,7 @@ final class Gears {
 
 	private void destroy() {
 		renderStream.destroy();
-		textureStream.destroy();
 		pbuffer.destroy();
-	}
-
-	public void updateSnapshot() {
-		snapshotRequest.incrementAndGet();
 	}
 
 	public void setVsync(final boolean vsync) {
@@ -257,7 +217,6 @@ final class Gears {
 			return;
 
 		this.transfersToBuffer = transfersToBuffer;
-		resetStreams();
 	}
 
 	public void setSamples(final int samples) {
@@ -265,21 +224,6 @@ final class Gears {
 			return;
 
 		this.samples = samples;
-		resetStreams();
-	}
-
-	private void resetStreams() {
-		pendingRunnables.offer(new Runnable() {
-			public void run() {
-				textureStream.destroy();
-				renderStream.destroy();
-
-				renderStream = renderStreamFactory.create(renderStream.getHandler(), samples, transfersToBuffer);
-				textureStream = textureStreamFactory.create(textureStream.getHandler(), transfersToBuffer);
-
-				updateSnapshot();
-			}
-		});
 	}
 
 	private void drainPendingActionsQueue() {
@@ -303,13 +247,6 @@ final class Gears {
 
 			drainPendingActionsQueue();
 
-			final long snapshotRequestID = snapshotRequest.get();
-			if ( snapshotCurrent < snapshotRequestID ) {
-				textureStream.snapshot();
-				snapshotCurrent = snapshotRequestID;
-			}
-			textureStream.tick();
-
 			renderStream.bind();
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -318,14 +255,7 @@ final class Gears {
 			glRotatef(VIEW_ROT_X, 1.0f, 0.0f, 0.0f);
 			glRotatef(VIEW_ROT_Y, 0.0f, 1.0f, 0.0f);
 			glRotatef(VIEW_ROT_Z, 0.0f, 0.0f, 1.0f);
-
-			glDisable(GL_LIGHTING);
-			glEnable(GL_TEXTURE_2D);
-
-			textureStream.bind();
-			drawQuad(textureStream.getWidth(), textureStream.getHeight());
-			glBindTexture(GL_TEXTURE_2D, 0);
-
+			
 			glDisable(GL_TEXTURE_2D);
 			glEnable(GL_LIGHTING);
 
