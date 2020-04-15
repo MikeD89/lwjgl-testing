@@ -4,12 +4,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import javafx.stage.*;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.Display;
-import org.w3c.dom.events.EventException;
 
-import javax.management.RuntimeMBeanException;
-import javax.swing.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class JFX_Canvas extends Application implements CanvasInterface {
@@ -61,7 +56,7 @@ public class JFX_Canvas extends Application implements CanvasInterface {
     }
 
     @Override
-    public void renderLoop(String[] args) throws LWJGLException {
+    public void renderLoop(String[] args) throws Exception {
 
     }
 }

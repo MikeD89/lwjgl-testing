@@ -1,4 +1,4 @@
-import org.lwjgl.Sys;
+
 
 public class FPSUpdater {
 
@@ -22,7 +22,7 @@ public class FPSUpdater {
 
 
     public long getTime() {
-        return (Sys.getTime() * 1000) / Sys.getTimerResolution();
+        return System.currentTimeMillis();
     }
 
     public boolean updateFPS() {

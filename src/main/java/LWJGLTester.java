@@ -1,11 +1,11 @@
 import javafx.application.Application;
 import lwjglfx.JavaFXGears;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.Sys;
-
-import java.util.function.Supplier;
-
-import static org.lwjgl.Sys.getTime;
+//import org.lwjgl.LWJGLException;
+//import org.lwjgl.Sys;
+//
+//import java.util.function.Supplier;
+//
+//import static org.lwjgl.Sys.getTime;
 
 
 public class LWJGLTester {

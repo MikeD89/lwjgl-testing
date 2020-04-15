@@ -106,7 +106,7 @@ public class JavaFXGears extends Application {
 
 		new Thread("LWJGL Renderer") {
 			public void run() {
-				controller.runGears(runningLatch);
+				//controller.runGears(runningLatch);
 				Platform.runLater(new Runnable() {
 					public void run() {
 						stage.close();

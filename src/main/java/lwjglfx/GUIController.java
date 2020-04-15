@@ -30,7 +30,6 @@ package lwjglfx;/*
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.value.ChangeListener;
@@ -40,23 +39,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.web.WebView;
 import javafx.util.StringConverter;
-import org.lwjgl.util.stream.StreamHandler;
-import org.lwjgl.util.stream.StreamUtil;
-import org.lwjgl.util.stream.StreamUtil.RenderStreamFactory;
-import org.lwjgl.util.stream.StreamUtil.TextureStreamFactory;
 
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Semaphore;
 
 import static javafx.beans.binding.Bindings.createStringBinding;
 import static javafx.collections.FXCollections.observableArrayList;
@@ -86,10 +76,6 @@ public class GUIController implements Initializable {
     private CheckBox vsync;
 
     @FXML
-    private ChoiceBox<RenderStreamFactory> renderChoice;
-    @FXML
-    private ChoiceBox<TextureStreamFactory> textureChoice;
-    @FXML
     private ChoiceBox<BufferingChoice> bufferingChoice;
 
     @FXML
@@ -101,8 +87,6 @@ public class GUIController implements Initializable {
     private Button websiteButton;
     @FXML
     private TextField websiteText;
-
-    private Gears gears;
 
     public GUIController() {
     }
@@ -164,68 +148,8 @@ public class GUIController implements Initializable {
                 }
             });
     }
+/**
 
-    private StreamHandler getReadHandler() {
-        return new StreamHandler() {
-
-            private WritableImage renderImage;
-
-            private long frame;
-            private long lastUpload;
-
-            {
-                new AnimationTimer() {
-                    @Override
-                    public void handle(final long now) {
-                        frame++;
-                    }
-                }.start();
-            }
-
-            public int getWidth() {
-                return (int) gearsView.getFitWidth();
-            }
-
-            public int getHeight() {
-                return (int) gearsView.getFitHeight();
-            }
-
-            public void process(final int width, final int height, final ByteBuffer data, final int stride, final Semaphore signal) {
-                // This method runs in the background rendering thread
-                Platform.runLater(new Runnable() {
-                    public void run() {
-                        try {
-                            // If we're quitting, discard update
-                            if (!gearsView.isVisible())
-                                return;
-
-                            // Detect resize and recreate the image
-                            if (renderImage == null || (int) renderImage.getWidth() != width || (int) renderImage.getHeight() != height) {
-                                renderImage = new WritableImage(width, height);
-                                gearsView.setImage(renderImage);
-                            }
-
-                            // Throttling, only update the JavaFX view once per frame.
-                            // *NOTE*: The +1 is weird here, but apparently setPixels triggers a new pulse within the current frame.
-                            // If we ignore that, we'd get a) worse performance from uploading double the frames and b) exceptions
-                            // on certain configurations (e.g. Nvidia GPU with the D3D pipeline).
-                            if (frame <= lastUpload + 1)
-                                return;
-
-                            lastUpload = frame;
-
-                            // Upload the image to JavaFX
-                            PixelWriter pw = renderImage.getPixelWriter();
-                            pw.setPixels(0, 0, width, height, pw.getPixelFormat(), data, stride);
-                        } finally {
-                            // Notify the render thread that we're done processing
-                            signal.release();
-                        }
-                    }
-                });
-            }
-        };
-    }
 
     // This method will run in the background rendering thread
     void runGears(final CountDownLatch runningLatch) {
@@ -236,8 +160,6 @@ public class GUIController implements Initializable {
             return;
         }
 
-        final List<RenderStreamFactory> renderStreamFactories = StreamUtil.getRenderStreamImplementations();
-        final List<TextureStreamFactory> textureStreamFactories = StreamUtil.getTextureStreamImplementations();
 
         final String vendor = glGetString(GL_VENDOR);
         final String version = glGetString(GL_VERSION);
@@ -298,7 +220,7 @@ public class GUIController implements Initializable {
 
         gears.execute(runningLatch);
     }
-
+ **/
     private enum BufferingChoice {
         SINGLE(1, "No buffering"),
         DOUBLE(2, "Double buffering"),
@@ -324,5 +246,6 @@ public class GUIController implements Initializable {
             return description;
         }
     }
+
 
 }
