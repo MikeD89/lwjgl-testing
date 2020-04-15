@@ -32,6 +32,7 @@
 package lwjglfx;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
 import javafx.application.Application;
@@ -87,7 +88,7 @@ public class JavaFXGears extends Application {
 
 		try {
 			final Scene scene = new Scene(content);
-			scene.getStylesheets().add(getClass().getClassLoader().getResource("gears.css").toExternalForm());
+			scene.getStylesheets().add(Objects.requireNonNull(getClass().getClassLoader().getResource("gears.css")).toExternalForm());
 
 			stage.setScene(scene);
 			stage.show();

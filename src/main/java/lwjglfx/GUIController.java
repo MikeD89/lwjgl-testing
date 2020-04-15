@@ -68,10 +68,7 @@ public class GUIController implements Initializable {
     private TextField websiteText;
 
     @FXML
-    private BorderPane glPanel;
-
-    private final AtomicBoolean aliveFlag = new AtomicBoolean(true);
-    private final CountDownLatch exitLatch = new CountDownLatch(1);
+    private BorderPane gearsRoot;
 
     public GUIController() {
     }
@@ -84,120 +81,14 @@ public class GUIController implements Initializable {
 
     public void initialize(final URL url, final ResourceBundle resourceBundle) {
 
+        DriftFXSurface.initialize();
+        DriftFXSurface surface = new DriftFXSurface();
+        gearsRoot.centerProperty().setValue(surface);
 
-//        stage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, windowEvent -> {
-//            // notify render thread that we're exiting
-//            aliveFlag.set(false);
-//            try {
-//                // block until render thread has cleaned up
-//                exitLatch.await();
-//            } catch (InterruptedException ignored) {
-//            }
-//        });
-
-//        DriftFXSurface.initialize();
-//        DriftFXSurface surface = new DriftFXSurface();
-//        new DriftFXRenderThread(aliveFlag, exitLatch, surface.getNativeSurfaceHandle()).start();
+        new DriftFXRenderThread( new AtomicBoolean(true), new CountDownLatch(1), surface.getNativeSurfaceHandle()).start();
 
     }
-/**
 
-
-    // This method will run in the background rendering thread
-    void runGears(final CountDownLatch runningLatch) {
-        try {
-            gears = new Gears(getReadHandler());
-        } catch (Throwable t) {
-            t.printStackTrace();
-            return;
-        }
-
-
-        final String vendor = glGetString(GL_VENDOR);
-        final String version = glGetString(GL_VERSION);
-
-        Platform.runLater(new Runnable() {
-            public void run() {
-                // Listen for FPS changes and update the fps label
-                final ReadOnlyIntegerProperty fps = gears.fpsProperty();
-
-                fpsLabel.textProperty().bind(createStringBinding(new Callable<String>() {
-                    public String call() throws Exception {
-                        return "FPS: " + fps.get();
-                    }
-                }, fps));
-                glInfoLabel.setText(vendor + " OpenGL " + version);
-
-                renderChoice.setItems(observableList(renderStreamFactories));
-                for (int i = 0; i < renderStreamFactories.size(); i++) {
-                    if (renderStreamFactories.get(i) == gears.getRenderStreamFactory()) {
-                        renderChoice.getSelectionModel().select(i);
-                        break;
-                    }
-                }
-                renderChoice.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<RenderStreamFactory>() {
-                    public void changed(final ObservableValue<? extends RenderStreamFactory> observableValue, final RenderStreamFactory oldValue, final RenderStreamFactory newValue) {
-                        gears.setRenderStreamFactory(newValue);
-                    }
-                });
-
-                bufferingChoice.getSelectionModel().select(gears.getTransfersToBuffer() - 1);
-                bufferingChoice.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<BufferingChoice>() {
-                    public void changed(final ObservableValue<? extends BufferingChoice> observableValue, final BufferingChoice oldValue, final BufferingChoice newValue) {
-                        gears.setTransfersToBuffer(newValue.getTransfersToBuffer());
-                    }
-                });
-
-                vsync.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    public void changed(final ObservableValue<? extends Boolean> observableValue, final Boolean oldValue, final Boolean newValue) {
-                        gears.setVsync(newValue);
-                    }
-                });
-
-                final int maxSamples = gears.getMaxSamples();
-                if (maxSamples == 1)
-                    msaaSamples.setDisable(true);
-                else {
-                    msaaSamples.setMax(Integer.numberOfTrailingZeros(maxSamples));
-                    msaaSamples.valueProperty().addListener(new ChangeListener<Number>() {
-                        public void changed(final ObservableValue<? extends Number> observableValue, final Number oldValue, final Number newValue) {
-                            gears.setSamples(1 << newValue.intValue());
-                        }
-                    });
-                }
-
-                webView.getEngine().load("http://www.stackoverflow.com/");
-            }
-        });
-
-        gears.execute(runningLatch);
-    }
- **/
-    private enum BufferingChoice {
-        SINGLE(1, "No buffering"),
-        DOUBLE(2, "Double buffering"),
-        TRIPLE(3, "Triple buffering");
-
-        private final int transfersToBuffer;
-        private final String description;
-
-        private BufferingChoice(final int transfersToBuffer, final String description) {
-            this.transfersToBuffer = transfersToBuffer;
-            this.description = transfersToBuffer + "x - " + description;
-        }
-
-        public int getTransfersToBuffer() {
-            return transfersToBuffer;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public String toString() {
-            return description;
-        }
-    }
 
 
 }
