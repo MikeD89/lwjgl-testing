@@ -100,11 +100,17 @@ public class GUIController implements Initializable {
     @FXML
     private Button websiteButton;
     @FXML
-    private TextField websiteAddress;
+    private TextField websiteText;
 
     private Gears gears;
 
     public GUIController() {
+    }
+
+    public void selectWebsite(){
+        System.out.println(websiteText.getCharacters());
+        webView.getEngine().load(websiteText.getCharacters().toString());
+
     }
 
     public void initialize(final URL url, final ResourceBundle resourceBundle) {
