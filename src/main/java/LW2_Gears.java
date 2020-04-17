@@ -98,7 +98,7 @@ public class LW2_Gears implements Renderable {
         glRotatef(view_roty, 0.0f, 1.0f, 0.0f);
         glRotatef(view_rotz, 0.0f, 0.0f, 1.0f);
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 75; i++) {
             for (int j = 0; j < 100; j++) {
                 glPushMatrix();
                 glTranslatef(-i + 50, -j, 0.0f);

@@ -262,7 +262,7 @@ final class Gears {
 			//for ( int i = -4; i < 4; i++ )
 			int i = 0;
 			{
-				for (int ii = 0; ii < 100; ii++) {
+				for (int ii = 0; ii < 75; ii++) {
 					for (int j = 0; j < 100; j++) {
 						glPushMatrix();
 						glTranslatef(-ii + 50, -j, 0.0f);
