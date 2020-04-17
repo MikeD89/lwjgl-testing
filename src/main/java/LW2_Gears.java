@@ -8,41 +8,44 @@ import org.lwjgl.LWJGLUtil;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.GLContext;
 
+import java.lang.reflect.Array;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.opengl.ARBTransposeMatrix.glLoadTransposeMatrixARB;
 import static org.lwjgl.opengl.GL11.*;
 
 public class LW2_Gears implements Renderable {
 
-    private float	view_rotx	= 20.0f;
+    private float view_rotx = 20.0f;
 
-    private float	view_roty	= 30.0f;
+    private float view_roty = 30.0f;
 
-    private float	view_rotz;
+    private float view_rotz;
 
-    private int		gear1;
+    private int gear1;
 
-    private int		gear2;
+    private int gear2;
 
-    private int		gear3;
+    private int gear3;
 
-    private float	angle;
+    private float angle;
 
     boolean init = false;
 
     private void init() {
-        if(init) {
+        if (init) {
             return;
         }
 
         init = true;
 
         // setup ogl
-        FloatBuffer pos = BufferUtils.createFloatBuffer(4).put(new float[] { 5.0f, 5.0f, 10.0f, 0.0f});
-        FloatBuffer red = BufferUtils.createFloatBuffer(4).put(new float[] { 0.8f, 0.1f, 0.0f, 1.0f});
-        FloatBuffer green = BufferUtils.createFloatBuffer(4).put(new float[] { 0.0f, 0.8f, 0.2f, 1.0f});
-        FloatBuffer blue = BufferUtils.createFloatBuffer(4).put(new float[] { 0.2f, 0.2f, 1.0f, 1.0f});
+        FloatBuffer pos = BufferUtils.createFloatBuffer(4).put(new float[]{5.0f, 5.0f, 10.0f, 0.0f});
+        FloatBuffer red = BufferUtils.createFloatBuffer(4).put(new float[]{0.8f, 0.1f, 0.0f, 1.0f});
+        FloatBuffer green = BufferUtils.createFloatBuffer(4).put(new float[]{0.0f, 0.8f, 0.2f, 1.0f});
+        FloatBuffer blue = BufferUtils.createFloatBuffer(4).put(new float[]{0.2f, 0.2f, 1.0f, 1.0f});
 
         pos.flip();
         red.flip();
@@ -95,11 +98,16 @@ public class LW2_Gears implements Renderable {
         glRotatef(view_roty, 0.0f, 1.0f, 0.0f);
         glRotatef(view_rotz, 0.0f, 0.0f, 1.0f);
 
-        glPushMatrix();
-        glTranslatef(-3.0f, -2.0f, 0.0f);
-        glRotatef(angle, 0.0f, 0.0f, 1.0f);
-        glCallList(gear1);
-        glPopMatrix();
+        for (int i = 0; i < 100; i++) {
+            for (int j = 0; j < 100; j++) {
+                glPushMatrix();
+                glTranslatef(-i + 50, -j, 0.0f);
+                glRotatef(angle, 0.0f, 0.0f, 1.0f);
+                glCallList(gear1);
+                glPopMatrix();
+            }
+        }
+
 
         glPushMatrix();
         glTranslatef(3.1f, -2.0f, 0.0f);
@@ -133,9 +141,9 @@ public class LW2_Gears implements Renderable {
      *
      * @param inner_radius radius of hole at center
      * @param outer_radius radius at center of teeth
-     * @param width width of gear
-     * @param teeth number of teeth
-     * @param tooth_depth depth of tooth
+     * @param width        width of gear
+     * @param teeth        number of teeth
+     * @param tooth_depth  depth of tooth
      */
     private void gear(float inner_radius, float outer_radius, float width, int teeth, float tooth_depth) {
         int i;

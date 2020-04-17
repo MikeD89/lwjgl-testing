@@ -262,11 +262,15 @@ final class Gears {
 			//for ( int i = -4; i < 4; i++ )
 			int i = 0;
 			{
-				glPushMatrix();
-				glTranslatef(-3.0f, -2.0f, i);
-				glRotatef(angle, 0.0f, 0.0f, 1.0f);
-				glCallList(gear1);
-				glPopMatrix();
+				for (int ii = 0; ii < 100; ii++) {
+					for (int j = 0; j < 100; j++) {
+						glPushMatrix();
+						glTranslatef(-ii + 50, -j, 0.0f);
+						glRotatef(angle, 0.0f, 0.0f, 1.0f);
+						glCallList(gear1);
+						glPopMatrix();
+					}
+				}
 
 				glPushMatrix();
 				glTranslatef(3.1f, -2.0f, i);
