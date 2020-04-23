@@ -14,8 +14,11 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
 
 public class TestPanel extends ApplicationTest {
+
+    private GUIController controller;
 
 
     /**
@@ -23,13 +26,18 @@ public class TestPanel extends ApplicationTest {
      */
     @Override
     public void start(Stage stage) throws IOException {
-        Pane a = FXMLLoader.load(getClass().getResource("gears.fxml"));
+        final URL fxmlURL = getClass().getClassLoader().getResource("gears.fxml");
+        final FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
 
-        final Scene scene = new Scene(a);
+        Pane content = (Pane) fxmlLoader.load();
+        controller = fxmlLoader.getController();
+
+        final Scene scene = new Scene(content);
         scene.getStylesheets().add(getClass().getClassLoader().getResource("gears.css").toExternalForm());
 
         stage.setScene(scene);
         stage.show();
+
     }
 
 
@@ -38,8 +46,22 @@ public class TestPanel extends ApplicationTest {
         // Get:
         TextField field = lookup("#timesClicked").query();
 
+        Assertions.assertThat(field).hasText("0");
+
         // when:
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
+            clickOn("#clickButton");
+        }
+
+        // then:
+        Assertions.assertThat(field).hasText("10");
+
+        controller.resetCount();
+
+        Assertions.assertThat(field).hasText("0");
+
+        // when:
+        for (int i = 0; i < 10; i++) {
             clickOn("#clickButton");
         }
 

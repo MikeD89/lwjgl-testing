@@ -123,6 +123,10 @@ public class GUIController implements Initializable {
         }
     }
 
+    public void resetCount() {
+        timesClicked.setText("0");
+    }
+
     public void initialize(final URL url, final ResourceBundle resourceBundle) {
         gearsView.fitWidthProperty().bind(gearsRoot.widthProperty());
         gearsView.fitHeightProperty().bind(gearsRoot.heightProperty());

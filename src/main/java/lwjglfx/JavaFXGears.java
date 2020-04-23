@@ -50,6 +50,11 @@ import javafx.stage.WindowEvent;
 public class JavaFXGears extends Application {
 
 	private final CountDownLatch runningLatch = new CountDownLatch(1);
+	private GUIController controller;
+
+	public void resetCounter()  {
+		controller.resetCount();
+	}
 
 	@Override
 	public void start(final Stage stage) {
@@ -83,7 +88,7 @@ public class JavaFXGears extends Application {
 			return;
 		}
 
-		final GUIController controller = fxmlLoader.getController();
+		controller = fxmlLoader.getController();
 
 		try {
 			final Scene scene = new Scene(content);
