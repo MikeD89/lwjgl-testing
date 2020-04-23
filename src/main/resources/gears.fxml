@@ -20,7 +20,6 @@
 <?import javafx.scene.web.WebView?>
 <?scenebuilder-stylesheet gears.css?>
 
-
 <DialogPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lwjglfx.GUIController">
    <content>
       <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0">
@@ -97,12 +96,11 @@
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                 <children>
                   <WebView fx:id="webView" layoutX="-6.0" layoutY="7.0" prefHeight="519.0" prefWidth="446.0" AnchorPane.bottomAnchor="172.0" AnchorPane.leftAnchor="-6.0" AnchorPane.rightAnchor="-3.0" AnchorPane.topAnchor="7.0" />
-                        <ButtonBar layoutX="14.0" layoutY="658.0" prefHeight="40.0" prefWidth="420.0">
-                          <buttons>
-                              <TextField fx:id="websiteText" prefHeight="25.0" prefWidth="246.0" promptText="Enter a website" text="http://stackoverflow.com" />
-                            <Button fx:id="websiteButton" mnemonicParsing="false" onAction="#selectWebsite" text="Go!" />
-                          </buttons>
-                        </ButtonBar>
+                        <TextField fx:id="websiteText" layoutX="29.0" layoutY="535.0" prefHeight="25.0" prefWidth="246.0" promptText="Enter a website" text="http://stackoverflow.com" />
+                        <TextField fx:id="timesClicked" layoutX="29.0" layoutY="584.0" prefHeight="25.0" prefWidth="246.0" promptText="Times Clicked!" text="0" />
+                        <ButtonBar layoutX="14.0" layoutY="658.0" prefHeight="40.0" prefWidth="420.0" />
+                      <Button fx:id="websiteButton" layoutX="354.0" layoutY="535.0" mnemonicParsing="false" onAction="#selectWebsite" text="Go!" />
+                        <Button fx:id="clickButton" layoutX="322.0" layoutY="584.0" mnemonicParsing="false" onAction="#clickButton" text="Click Me!" />
                 </children>
               </AnchorPane>
             </items>

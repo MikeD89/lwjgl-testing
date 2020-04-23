@@ -98,19 +98,29 @@ public class GUIController implements Initializable {
     @FXML
     private WebView webView;
     @FXML
-    private Button websiteButton;
-    @FXML
     private TextField websiteText;
-
+    @FXML
+    private TextField timesClicked;
     private Gears gears;
 
     public GUIController() {
     }
 
+    @FXML
     public void selectWebsite(){
-        System.out.println(websiteText.getCharacters());
         webView.getEngine().load(websiteText.getCharacters().toString());
+    }
 
+    @FXML
+    public void clickButton() {
+        try {
+            int a = Integer.decode(timesClicked.getCharacters().toString());
+            a += 1;
+            timesClicked.setText("" + a);
+        }
+        catch (Exception e) {
+            timesClicked.setText("0");
+        }
     }
 
     public void initialize(final URL url, final ResourceBundle resourceBundle) {

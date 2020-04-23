@@ -17,14 +17,14 @@ public class LWJGLTester {
 
         // Swing
      //   CanvasInterface c = new LW2_AWT_Canvas(fps);
-         CanvasInterface c = new LW2_AWT_Canvas_Buttons(fps);
+         //CanvasInterface c = new LW2_AWT_Canvas_Buttons(fps);
 
         // JFX
-     //Application.launch(JavaFXGears.class, args);
+     Application.launch(JavaFXGears.class, args);
 //        CanvasInterface c = JFX_Canvas.canvas.get();
 
         // Go go
-        c.setRenderable(new LW2_Gears());
-        c.renderLoop(args);
+//        c.setRenderable(new LW2_Gears());
+  //      c.renderLoop(args);
     }
 }
